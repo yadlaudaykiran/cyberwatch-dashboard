@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>CyberWatch Dashboard</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+
+    margin:0;
+
+    padding:20px;
+
+    font-family:Arial;
+
+    background:
+    linear-gradient(
+        135deg,
+        #0f172a,
+        #1e3a8a,
+        #9333ea
+    );
+
+    color:white;
+}
+
+/* TITLE */
+
+h1{
+
+    text-align:center;
+
+    font-size:40px;
+
+    margin-bottom:25px;
+}
+
+/* BUTTONS */
+
+.top-buttons{
+
+    text-align:center;
+
+    margin-bottom:25px;
+}
+
+.btn{
+
+    padding:12px 20px;
+
+    margin:5px;
+
+    border:none;
+
+    border-radius:10px;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    transition:0.3s;
+}
+
+.btn:hover{
+
+    transform:scale(1.08);
+}
+
+/* COLORS */
+
+.start{
+
+    background:#22c55e;
+}
+
+.stop{
+
+    background:#ef4444;
+}
+
+.logout{
+
+    background:#f59e0b;
+}
+
+/* STATUS */
+
+#status{
+
+    text-align:center;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    margin-bottom:25px;
+}
+
+/* GRID */
+
+.container{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+}
+
+/* CARDS */
+
+.card{
+
+    background:#020617;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    box-shadow:0 0 20px black;
+}
+
+.card h2{
+
+    font-size:28px;
+
+    margin-bottom:15px;
+}
+
+/* LIST */
+
+ul{
+
+    max-height:320px;
+
+    overflow:auto;
+
+    padding-left:20px;
+}
+
+li{
+
+    margin-bottom:6px;
+
+    font-size:15px;
+}
+
+/* GRAPH TITLE */
+
+.graph-title{
+
+    text-align:center;
+
+    margin-top:45px;
+
+    margin-bottom:15px;
+
+    font-size:36px;
+
+    font-weight:bold;
+}
+
+/* CUSTOM CHART LABEL */
+
+.chart-label{
+
+    text-align:center;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    margin-top:20px;
+
+    margin-bottom:10px;
+}
+
+#ipPopup{
+
+    position:fixed;
+
+    bottom:30px;
+
+    right:30px;
+
+    background:#111827;
+
+    color:white;
+
+    padding:15px 20px;
+
+    border-radius:12px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    box-shadow:0 0 20px black;
+
+    display:none;
+
+    z-index:9999;
+
+    animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* GRAPH */
+
+canvas{
+
+    background:#020617;
+
+    border-radius:16px;
+
+    padding:20px;
+
+    margin-top:10px;
+
+    width:100% !important;
+
+    height:550px !important;
+
+    box-shadow:0 0 20px black;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    h1{
+
+        font-size:30px;
+    }
+
+    .container{
+
+        grid-template-columns:1fr;
+    }
+
+    .card h2{
+
+        font-size:24px;
+    }
+
+    .graph-title{
+
+        font-size:28px;
+    }
+
+    .chart-label{
+
+        font-size:20px;
+    }
+
+    canvas{
+
+        height:350px !important;
+    }
+
+    #status{
+
+        font-size:20px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🚀 CyberWatch Dashboard</h1>
+
+<!-- BUTTONS -->
+
+<div class="top-buttons">
+
+<button
+class="btn start"
+onclick="startMonitoring()">
+
+▶ Start
+
+</button>
+
+<button
+class="btn stop"
+onclick="stopMonitoring()">
+
+⏹ Stop
+
+</button>
+
+<button
+class="btn logout"
+onclick="window.location='/logout'">
+
+🚪 Logout
+
+</button>
+
+</div>
+
+<!-- STATUS -->
+
+<div id="status">
+
+🔴 Monitoring Stopped
+
+</div>
+
+<!-- LIVE DATA -->
+
+<div class="container">
+
+<div class="card">
+
+<h2>📡 Network Packets</h2>
+
+<ul id="packets"></ul>
+
+</div>
+
+<div class="card">
+
+<h2>⌨️ Keystrokes</h2>
+
+<ul id="keys"></ul>
+
+</div>
+
+</div>
+
+<!-- GRAPH -->
+
+<div class="graph-title">
+
+📊 Network Traffic Analysis
+
+</div>
+
+<div class="chart-label">
+
+📡 Network Packet Count
+
+</div>
+
+<canvas id="chart"></canvas>
+
+<div id="ipPopup">
+
+</div>
+
+<script>
+
+/* STATUS */
+
+const statusDiv =
+    document.getElementById("status");
+
+
+/* STORE FULL IPS */
+
+var fullIpLabels = [];
+
+
+/* CHART */
+
+var chart = new Chart(
+
+    document.getElementById("chart"),
+
+    {
+
+        type:'bar',
+
+        data:{
+
+            labels:[],
+
+            datasets:[{
+
+                label:'',
+
+                data:[],
+
+                backgroundColor:[],
+
+                borderRadius:12,
+
+                barThickness:
+                window.innerWidth < 768
+                ? 22
+                : 45
+
+            }]
+        },
+
+        options:{
+
+            animation:false,
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            layout:{
+
+                padding:{
+                    top:20,
+                    bottom:20,
+                    left:15,
+                    right:15
+                }
+            },
+
+            plugins:{
+
+                legend:{
+                    display:false
+                },
+
+                tooltip:{
+
+                    enabled:true,
+
+                    backgroundColor:'#111827',
+
+                    titleColor:'#ffffff',
+
+                    bodyColor:'#ffffff',
+
+                    titleFont:{
+                        size:20,
+                        weight:'bold'
+                    },
+
+                    bodyFont:{
+                        size:18
+                    },
+
+                    padding:14,
+
+                    callbacks:{
+
+                        title:function(context){
+
+                            let index =
+                            context[0].dataIndex;
+
+                            return (
+                                "IP Address: " +
+                                fullIpLabels[index]
+                            );
+                        },
+
+                        label:function(context){
+
+                            return (
+                                context.raw +
+                                " packets"
+                            );
+                        }
+                    }
+                }
+
+            },
+
+            scales:{
+
+                x:{
+
+                    ticks:{
+
+                        color:'white',
+
+                        autoSkip:false,
+
+                        maxRotation:0,
+
+                        minRotation:0,
+
+                        padding:10,
+
+                        callback:function(value){
+
+                            return "IP-" +
+                            (value + 1);
+                        },
+
+                        font:{
+
+                            size:
+                            window.innerWidth < 768
+                            ? 13
+                            : 18,
+
+                            weight:'bold'
+                        }
+                    },
+
+                    grid:{
+                        display:false
+                    }
+                },
+
+                y:{
+
+                    beginAtZero:true,
+
+                    ticks:{
+
+                        color:'white',
+
+                        font:{
+
+                            size:
+                            window.innerWidth < 768
+                            ? 12
+                            : 18,
+
+                            weight:'bold'
+                        }
+                    },
+
+                    grid:{
+                        color:'rgba(255,255,255,0.08)'
+                    }
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* START */
+
+function startMonitoring(){
+
+    fetch('/start');
+}
+
+
+/* STOP */
+
+function stopMonitoring(){
+
+    fetch('/stop');
+}
+
+
+/* LIVE UPDATE */
+
+function updateDashboard(){
+
+    fetch('/live_data')
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        console.log("LIVE DATA:", data);
+
+        if(!data){
+
+            return;
+        }
+
+        data.packets =
+            data.packets || [];
+
+        data.keys =
+            data.keys || [];
+
+        data.labels =
+            data.labels || [];
+
+        data.values =
+            data.values || [];
+
+
+        /* STATUS */
+
+        if(data.monitoring){
+
+            statusDiv.innerHTML =
+                "🟢 Monitoring Active";
+
+        } else {
+
+            statusDiv.innerHTML =
+                "🔴 Monitoring Stopped";
+
+        }
+
+
+        /* PACKETS */
+
+        document
+        .getElementById("packets")
+        .innerHTML =
+
+            data.packets.map(
+
+                p => `<li>${p}</li>`
+
+            ).join("");
+
+
+        /* KEYS */
+
+        document
+        .getElementById("keys")
+        .innerHTML =
+
+            data.keys.map(
+
+                k => `<li>${k}</li>`
+
+            ).join("");
+
+
+        /* FULL IPS */
+
+        fullIpLabels =
+            data.labels;
+
+
+        /* DYNAMIC LABELS */
+
+        let dynamicLabels = [];
+
+        for(
+
+            let i = 0;
+
+            i < data.labels.length;
+
+            i++
+
+        ){
+
+            dynamicLabels.push(
+
+                "IP-" + (i + 1)
+
+            );
+        }
+
+
+        /* COLORS */
+
+        let colors = [
+
+            '#22c55e',
+            '#3b82f6',
+            '#f59e0b',
+            '#ef4444',
+            '#a855f7',
+            '#14b8a6',
+            '#f97316',
+            '#8b5cf6',
+            '#06b6d4',
+            '#84cc16'
+
+        ];
+
+
+        /* UPDATE GRAPH */
+
+        chart.data.labels =
+            dynamicLabels;
+
+        chart.data.datasets[0].data =
+            data.values;
+
+        chart.data.datasets[0]
+        .backgroundColor =
+
+            dynamicLabels.map(
+
+                (_, i) => colors[
+                    i % colors.length
+                ]
+
+            );
+
+        chart.update();
+
+    })
+
+    .catch(err => {
+
+        console.log(
+            "Dashboard Error:",
+            err
+        );
+
+    });
+
+}
+
+
+/* AUTO UPDATE */
+
+setInterval(updateDashboard, 2000);
+
+
+/* INITIAL LOAD */
+
+updateDashboard();
+
+
+/* CLICK BAR → SHOW FULL IP */
+
+document
+.getElementById("chart")
+
+.onclick = function(evt){
+
+    const points = chart.getElementsAtEventForMode(
+
+        evt,
+
+        'nearest',
+
+        { intersect:true },
+
+        true
+
+    );
+
+    if(points.length){
+
+        const index = points[0].index;
+
+        const fullIp =
+        fullIpLabels[index];
+
+        const popup =
+        document.getElementById("ipPopup");
+
+        popup.innerHTML =
+            "🌐 " + fullIp;
+
+        popup.style.display =
+            "block";
+
+        setTimeout(() => {
+
+            popup.style.display =
+                "none";
+
+        }, 5000);
+    }
+};
+
+</script>
+
+</body>
+</html>
