@@ -3,3 +3,6 @@ Werkzeug
 scapy
 pynput
 reportlab
+flask_sqlalchemy
+requests
+pandas

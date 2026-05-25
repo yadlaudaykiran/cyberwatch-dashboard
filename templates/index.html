@@ -9,12 +9,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <style>
 
 body{
 
     margin:0;
-
     padding:20px;
 
     font-family:Arial;
@@ -28,6 +34,17 @@ body{
     );
 
     color:white;
+
+    transition:0.4s;
+}
+
+/* LIGHT MODE */
+
+body.light-mode{
+
+    background:#f3f4f6;
+
+    color:black;
 }
 
 /* TITLE */
@@ -36,7 +53,7 @@ h1{
 
     text-align:center;
 
-    font-size:40px;
+    font-size:42px;
 
     margin-bottom:25px;
 }
@@ -52,45 +69,48 @@ h1{
 
 .btn{
 
-    padding:12px 20px;
-
-    margin:5px;
+    padding:12px 18px;
 
     border:none;
 
-    border-radius:10px;
+    border-radius:12px;
 
     color:white;
 
     cursor:pointer;
 
-    font-size:16px;
+    font-size:15px;
 
     font-weight:bold;
+
+    margin:5px;
 
     transition:0.3s;
 }
 
 .btn:hover{
 
-    transform:scale(1.08);
+    transform:scale(1.07);
 }
 
-/* COLORS */
-
 .start{
-
     background:#22c55e;
 }
 
 .stop{
-
     background:#ef4444;
 }
 
 .logout{
-
     background:#f59e0b;
+}
+
+.theme{
+    background:#3b82f6;
+}
+
+.export{
+    background:#8b5cf6;
 }
 
 /* STATUS */
@@ -117,7 +137,7 @@ h1{
     gap:20px;
 }
 
-/* CARDS */
+/* CARD */
 
 .card{
 
@@ -127,14 +147,21 @@ h1{
 
     border-radius:16px;
 
-    box-shadow:0 0 20px black;
+    box-shadow:0 0 18px black;
+}
+
+body.light-mode .card{
+
+    background:white;
+
+    color:black;
 }
 
 .card h2{
 
-    font-size:28px;
+    font-size:26px;
 
-    margin-bottom:15px;
+    margin-bottom:12px;
 }
 
 /* LIST */
@@ -150,84 +177,25 @@ ul{
 
 li{
 
-    margin-bottom:6px;
+    margin-bottom:7px;
 
     font-size:15px;
 }
 
-/* GRAPH TITLE */
+/* GRAPH */
 
 .graph-title{
 
     text-align:center;
 
+    font-size:34px;
+
     margin-top:45px;
 
     margin-bottom:15px;
 
-    font-size:36px;
-
     font-weight:bold;
 }
-
-/* CUSTOM CHART LABEL */
-
-.chart-label{
-
-    text-align:center;
-
-    font-size:28px;
-
-    font-weight:bold;
-
-    margin-top:20px;
-
-    margin-bottom:10px;
-}
-
-#ipPopup{
-
-    position:fixed;
-
-    bottom:30px;
-
-    right:30px;
-
-    background:#111827;
-
-    color:white;
-
-    padding:15px 20px;
-
-    border-radius:12px;
-
-    font-size:20px;
-
-    font-weight:bold;
-
-    box-shadow:0 0 20px black;
-
-    display:none;
-
-    z-index:9999;
-
-    animation:fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn{
-
-    from{
-        opacity:0;
-        transform:translateY(10px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-/* GRAPH */
 
 canvas{
 
@@ -237,13 +205,80 @@ canvas{
 
     padding:20px;
 
-    margin-top:10px;
-
     width:100% !important;
 
     height:550px !important;
 
-    box-shadow:0 0 20px black;
+    box-shadow:0 0 18px black;
+}
+
+body.light-mode canvas{
+
+    background:white;
+}
+
+/* MAP */
+
+#map{
+
+    height:450px;
+
+    margin-top:25px;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    box-shadow:0 0 18px black;
+}
+
+/* NOTIFICATIONS */
+
+.notifications{
+
+    margin-top:30px;
+}
+
+.notification-item{
+
+    background:#dc2626;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    margin-top:10px;
+
+    font-weight:bold;
+
+    box-shadow:0 0 10px black;
+}
+
+/* GEO IP */
+
+.geo-box{
+
+    margin-top:30px;
+}
+
+.geo-card{
+
+    background:#111827;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    margin-top:10px;
+
+    box-shadow:0 0 10px black;
+}
+
+body.light-mode .geo-card{
+
+    background:#e5e7eb;
+
+    color:black;
 }
 
 /* MOBILE */
@@ -260,31 +295,25 @@ canvas{
         grid-template-columns:1fr;
     }
 
+    canvas{
+
+        height:350px !important;
+    }
+
+    #map{
+
+        height:300px;
+    }
+
     .card h2{
 
-        font-size:24px;
+        font-size:22px;
     }
 
     .graph-title{
 
         font-size:28px;
     }
-
-    .chart-label{
-
-        font-size:20px;
-    }
-
-    canvas{
-
-        height:350px !important;
-    }
-
-    #status{
-
-        font-size:20px;
-    }
-
 }
 
 </style>
@@ -312,6 +341,30 @@ class="btn stop"
 onclick="stopMonitoring()">
 
 ⏹ Stop
+
+</button>
+
+<button
+class="btn theme"
+onclick="toggleTheme()">
+
+🌗 Theme
+
+</button>
+
+<button
+class="btn export"
+onclick="window.location='/export/pdf'">
+
+📄 Export PDF
+
+</button>
+
+<button
+class="btn export"
+onclick="window.location='/export/csv'">
+
+📊 Export CSV
 
 </button>
 
@@ -359,19 +412,39 @@ onclick="window.location='/logout'">
 
 <div class="graph-title">
 
-📊 Network Traffic Analysis
-
-</div>
-
-<div class="chart-label">
-
-📡 Network Packet Count
+📊 Live Network Traffic
 
 </div>
 
 <canvas id="chart"></canvas>
 
-<div id="ipPopup">
+<!-- ATTACK MAP -->
+
+<div class="graph-title">
+
+🌍 Live Attack Map
+
+</div>
+
+<div id="map"></div>
+
+<!-- NOTIFICATIONS -->
+
+<div class="notifications">
+
+<h2>🔔 Real-Time Notifications</h2>
+
+<div id="notifications"></div>
+
+</div>
+
+<!-- GEO IP -->
+
+<div class="geo-box">
+
+<h2>🌐 Geo IP Tracking</h2>
+
+<div id="geoData"></div>
 
 </div>
 
@@ -380,17 +453,103 @@ onclick="window.location='/logout'">
 /* STATUS */
 
 const statusDiv =
-    document.getElementById("status");
+document.getElementById("status")
+
+/* THEME */
+
+function toggleTheme(){
+
+    document.body.classList.toggle(
+        "light-mode"
+    )
+}
+
+/* START */
+
+function startMonitoring(){
+
+    statusDiv.innerHTML =
+    "🟢 Starting Monitoring..."
+
+    fetch('/start')
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        statusDiv.innerHTML =
+        "🟢 Monitoring Active"
+
+        showNotification(
+            "🚀 Monitoring Started"
+        )
+
+        updateDashboard()
+    })
+
+    .catch(err => {
+
+        console.log(err)
+
+        statusDiv.innerHTML =
+        "❌ Failed To Start"
+    })
+}
 
 
-/* STORE FULL IPS */
+function stopMonitoring(){
 
-var fullIpLabels = [];
+    statusDiv.innerHTML =
+    "🔴 Stopping Monitoring..."
 
+    fetch('/stop')
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        statusDiv.innerHTML =
+        "🔴 Monitoring Stopped"
+
+        showNotification(
+            "⏹ Monitoring Stopped"
+        )
+
+        updateDashboard()
+    })
+
+    .catch(err => {
+
+        console.log(err)
+
+        statusDiv.innerHTML =
+        "❌ Failed To Stop"
+    })
+}
+
+function showNotification(message){
+
+    const notificationDiv =
+    document.getElementById(
+        "notifications"
+    )
+
+    notificationDiv.innerHTML =
+
+    `
+
+    <div class="notification-item">
+
+        ${message}
+
+    </div>
+
+    ` + notificationDiv.innerHTML
+}
 
 /* CHART */
 
-var chart = new Chart(
+const chart = new Chart(
 
     document.getElementById("chart"),
 
@@ -404,17 +563,30 @@ var chart = new Chart(
 
             datasets:[{
 
-                label:'',
+                label:'Packet Count',
 
                 data:[],
 
-                backgroundColor:[],
+                backgroundColor:[
+
+                    '#22c55e',
+                    '#3b82f6',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#a855f7',
+                    '#06b6d4',
+                    '#84cc16',
+                    '#f97316',
+                    '#14b8a6',
+                    '#8b5cf6'
+
+                ],
 
                 borderRadius:12,
 
                 barThickness:
                 window.innerWidth < 768
-                ? 22
+                ? 25
                 : 45
 
             }]
@@ -422,72 +594,43 @@ var chart = new Chart(
 
         options:{
 
-            animation:false,
-
             responsive:true,
 
             maintainAspectRatio:false,
 
-            layout:{
-
-                padding:{
-                    top:20,
-                    bottom:20,
-                    left:15,
-                    right:15
-                }
-            },
+            animation:false,
 
             plugins:{
 
                 legend:{
-                    display:false
+
+                    labels:{
+
+                        color:'white',
+
+                        font:{
+
+                            size:16,
+
+                            weight:'bold'
+                        }
+                    }
                 },
 
                 tooltip:{
 
                     enabled:true,
 
-                    backgroundColor:'#111827',
-
-                    titleColor:'#ffffff',
-
-                    bodyColor:'#ffffff',
-
                     titleFont:{
-                        size:20,
-                        weight:'bold'
-                    },
-
-                    bodyFont:{
                         size:18
                     },
 
-                    padding:14,
+                    bodyFont:{
+                        size:16
+                    },
 
-                    callbacks:{
-
-                        title:function(context){
-
-                            let index =
-                            context[0].dataIndex;
-
-                            return (
-                                "IP Address: " +
-                                fullIpLabels[index]
-                            );
-                        },
-
-                        label:function(context){
-
-                            return (
-                                context.raw +
-                                " packets"
-                            );
-                        }
-                    }
+                    padding:14
                 }
-
             },
 
             scales:{
@@ -498,33 +641,15 @@ var chart = new Chart(
 
                         color:'white',
 
-                        autoSkip:false,
-
-                        maxRotation:0,
-
-                        minRotation:0,
-
-                        padding:10,
-
-                        callback:function(value){
-
-                            return "IP-" +
-                            (value + 1);
-                        },
-
                         font:{
 
                             size:
                             window.innerWidth < 768
-                            ? 13
-                            : 18,
+                            ? 11
+                            : 16,
 
                             weight:'bold'
                         }
-                    },
-
-                    grid:{
-                        display:false
                     }
                 },
 
@@ -540,43 +665,33 @@ var chart = new Chart(
 
                             size:
                             window.innerWidth < 768
-                            ? 12
-                            : 18,
+                            ? 11
+                            : 16,
 
                             weight:'bold'
                         }
-                    },
-
-                    grid:{
-                        color:'rgba(255,255,255,0.08)'
                     }
                 }
-
             }
-
         }
-
     }
-);
+)
 
+/* MAP */
 
-/* START */
+const map = L.map('map').setView([20, 78], 4)
 
-function startMonitoring(){
+L.tileLayer(
 
-    fetch('/start');
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+{
+    attribution:'OpenStreetMap'
 }
 
+).addTo(map)
 
-/* STOP */
-
-function stopMonitoring(){
-
-    fetch('/stop');
-}
-
-
-/* LIVE UPDATE */
+/* UPDATE DASHBOARD */
 
 function updateDashboard(){
 
@@ -586,40 +701,20 @@ function updateDashboard(){
 
     .then(data => {
 
-        console.log("LIVE DATA:", data);
-
-        if(!data){
-
-            return;
-        }
-
-        data.packets =
-            data.packets || [];
-
-        data.keys =
-            data.keys || [];
-
-        data.labels =
-            data.labels || [];
-
-        data.values =
-            data.values || [];
-
+        console.log(data)
 
         /* STATUS */
 
         if(data.monitoring){
 
             statusDiv.innerHTML =
-                "🟢 Monitoring Active";
+            "🟢 Monitoring Active"
 
-        } else {
+        }else{
 
             statusDiv.innerHTML =
-                "🔴 Monitoring Stopped";
-
+            "🔴 Monitoring Stopped"
         }
-
 
         /* PACKETS */
 
@@ -627,12 +722,11 @@ function updateDashboard(){
         .getElementById("packets")
         .innerHTML =
 
-            data.packets.map(
+        data.packets.map(
 
-                p => `<li>${p}</li>`
+            p => `<li>${p}</li>`
 
-            ).join("");
-
+        ).join("")
 
         /* KEYS */
 
@@ -640,79 +734,108 @@ function updateDashboard(){
         .getElementById("keys")
         .innerHTML =
 
-            data.keys.map(
+        data.keys.map(
 
-                k => `<li>${k}</li>`
+            k => `<li>${k}</li>`
 
-            ).join("");
+        ).join("")
 
-
-        /* FULL IPS */
-
-        fullIpLabels =
-            data.labels;
-
-
-        /* DYNAMIC LABELS */
-
-        let dynamicLabels = [];
-
-        for(
-
-            let i = 0;
-
-            i < data.labels.length;
-
-            i++
-
-        ){
-
-            dynamicLabels.push(
-
-                "IP-" + (i + 1)
-
-            );
-        }
-
-
-        /* COLORS */
-
-        let colors = [
-
-            '#22c55e',
-            '#3b82f6',
-            '#f59e0b',
-            '#ef4444',
-            '#a855f7',
-            '#14b8a6',
-            '#f97316',
-            '#8b5cf6',
-            '#06b6d4',
-            '#84cc16'
-
-        ];
-
-
-        /* UPDATE GRAPH */
+        /* GRAPH */
 
         chart.data.labels =
-            dynamicLabels;
+        data.labels
 
         chart.data.datasets[0].data =
-            data.values;
+        data.values
 
-        chart.data.datasets[0]
-        .backgroundColor =
+        chart.update()
 
-            dynamicLabels.map(
+        /* NOTIFICATIONS */
 
-                (_, i) => colors[
-                    i % colors.length
-                ]
+        const notificationDiv =
 
-            );
+        document.getElementById(
+            "notifications"
+        )
 
-        chart.update();
+        notificationDiv.innerHTML =
+
+        data.notifications.map(
+
+            n => `
+
+            <div class="notification-item">
+
+                ${n}
+
+            </div>
+
+            `
+
+        ).join("")
+
+        /* GEO IP */
+
+        const geoDiv =
+
+        document.getElementById(
+            "geoData"
+        )
+
+        geoDiv.innerHTML =
+
+        data.geo.map(g => `
+
+            <div class="geo-card">
+
+                <b>IP:</b> ${g.ip}<br>
+
+                <b>Country:</b> ${g.country}<br>
+
+                <b>City:</b> ${g.city}<br>
+
+                <b>ISP:</b> ${g.isp}
+
+            </div>
+
+        `).join("")
+
+        /* REMOVE OLD MARKERS */
+
+        map.eachLayer(function(layer){
+
+            if(layer instanceof L.Marker){
+
+                map.removeLayer(layer)
+            }
+        })
+
+        /* ADD NEW MARKERS */
+
+        data.geo.forEach(g => {
+
+            if(g.country !== "Unknown"){
+
+                const marker =
+
+                L.marker([
+
+                    20 + Math.random()*10,
+
+                    78 + Math.random()*10
+
+                ])
+
+                .addTo(map)
+
+                .bindPopup(
+
+                    `<b>${g.ip}</b><br>
+                    ${g.country}`
+
+                )
+            }
+        })
 
     })
 
@@ -721,66 +844,49 @@ function updateDashboard(){
         console.log(
             "Dashboard Error:",
             err
-        );
-
-    });
-
+        )
+    })
 }
-
 
 /* AUTO UPDATE */
 
-setInterval(updateDashboard, 2000);
+/* AUTO UPDATE */
+
+setInterval(() => {
+
+    updateDashboard()
+
+}, 1000)
 
 
-/* INITIAL LOAD */
+/* PAGE LOAD */
 
-updateDashboard();
+window.onload = () => {
 
+    updateDashboard()
 
-/* CLICK BAR → SHOW FULL IP */
+    /* RESTORE STATUS */
 
-document
-.getElementById("chart")
+    fetch('/status')
 
-.onclick = function(evt){
+    .then(res => res.json())
 
-    const points = chart.getElementsAtEventForMode(
+    .then(data => {
 
-        evt,
+        if(data.monitoring){
 
-        'nearest',
+            statusDiv.innerHTML =
+            "🟢 Monitoring Active"
 
-        { intersect:true },
+        }else{
 
-        true
+            statusDiv.innerHTML =
+            "🔴 Monitoring Stopped"
+        }
 
-    );
+    })
 
-    if(points.length){
-
-        const index = points[0].index;
-
-        const fullIp =
-        fullIpLabels[index];
-
-        const popup =
-        document.getElementById("ipPopup");
-
-        popup.innerHTML =
-            "🌐 " + fullIp;
-
-        popup.style.display =
-            "block";
-
-        setTimeout(() => {
-
-            popup.style.display =
-                "none";
-
-        }, 5000);
-    }
-};
+}
 
 </script>
 
