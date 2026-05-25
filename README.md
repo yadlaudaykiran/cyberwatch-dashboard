@@ -36,12 +36,12 @@ Real-time cybersecurity monitoring dashboard built using Python and Flask.
 ---
 ### 📊 live network traffic
 
-![livenetworktraffic](screenshots/livenetworktraffic.png)
+![livenetworktraffic](screenshots/livenetworktraffic.PNG)
 
 ---
 ### 🌍 network packets
 
-![networkpackets](screenshots/networkpackets.png)
+![networkpackets](screenshots/networkpackets.PNG)
 
 ```bash
 pip install -r requirements.txt
