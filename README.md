@@ -13,16 +13,17 @@ Real-time cybersecurity monitoring dashboard built using Python and Flask.
 
 ## 📸 Screenshots
 
+### 🔐 REGISTER Page
+
+![register](screenshots/register.png)
+--- 
+
 ### 🔐 Login Page
 
 ![Login](screenshots/login.png)
 
 ---
-### 🔐 REGISTER Page
 
-![register](screenshots/register.png)
-
----
 ### 🌍 network packets
 
 ![networkpackets](screenshots/networkpackets.PNG)
