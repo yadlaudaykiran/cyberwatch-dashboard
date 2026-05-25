@@ -11,7 +11,37 @@ Real-time cybersecurity monitoring dashboard built using Python and Flask.
 - Live traffic visualization
 - Responsive dashboard
 
-## Installation
+## 📸 Screenshots
+
+### 🔐 Login Page
+
+![Login](screenshots/login.png)
+
+---
+### 🔐 REGISTER Page
+
+![register](screenshots/register.png)
+
+---
+
+### 📊 Geo IP tracking
+
+![geoiptracking](screenshots/geoiptracking.png)
+
+---
+### 🌍 live attack map
+
+![liveattackmap](screenshots/liveattackmap.png)
+
+---
+### 📊 live network traffic
+
+![livenetworktraffic](screenshots/livenetworktraffic.png)
+
+---
+### 🌍 network packets
+
+![networkpackets](screenshots/networkpackets.png)
 
 ```bash
 pip install -r requirements.txt
