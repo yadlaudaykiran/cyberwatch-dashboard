@@ -1,0 +1,23 @@
+# Python Cache
+__pycache__/
+*.pyc
+
+# Database
+users.db
+
+# Logs
+logs/
+
+# Environment Variables
+.env
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Reports
+*.pdf
+*.csv
